@@ -6,8 +6,13 @@
     'label_position' => 'top',
 ])
 @php
-    $type = $element['input_type'];
     $name = $element['key'];
+    if ($s = strpos($name, '[', 0)) {
+        $relArr = explode('[', $name);
+        $relName = $relArr[0];
+        $relField = explode(']', $relArr[1])[0];
+    }
+    $type = $element['input_type'];
     $label = $element['label'];
     $authorised = $element['authorised'] ?? true;
     $width = $element['width'] ?? 'full';
@@ -162,7 +167,9 @@
             @endforeach
         @endforeach
         @endif
-        @if (isset($_old[$name]))
+        @if (isset($relName))
+            textval = '{{$_old[$relName]->$relField}}';
+        @elseif (isset($_old[$name]))
             textval = '{{$_old[$name]}}';
         @endif
         $watch('showelement', function (val) {required = val; console.log('text required'); console.log(val);});

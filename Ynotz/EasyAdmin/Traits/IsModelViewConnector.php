@@ -339,7 +339,6 @@ trait IsModelViewConnector{
                     $type = $this->getRelationType($rel);
                     switch ($type) {
                         case 'BelongsTo':
-                            // $relInstance = ($this->getRelatedModelClass($rel))::find($val);
                             $instance->$rel()->associate($val);
                             $instance->save();
                             break;
@@ -347,7 +346,8 @@ trait IsModelViewConnector{
                             $instance->$rel()->sync($val);
                             break;
                         case 'HasOne':
-                            $instance->$rel()->save($val);
+                            $relInst = $instance->$rel;
+                            $relInst->update($val);
                             break;
                         case 'HasMany':
                             $instance->$rel()->delete();
