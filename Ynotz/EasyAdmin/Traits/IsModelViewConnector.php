@@ -4,12 +4,13 @@ namespace Modules\Ynotz\EasyAdmin\Traits;
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
-use Modules\Ynotz\EasyAdmin\InputUpdateResponse;
-use Modules\Ynotz\EasyAdmin\Services\FormHelper;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Database\Query\Builder;
+use Modules\Ynotz\EasyAdmin\InputUpdateResponse;
+use Modules\Ynotz\EasyAdmin\Services\FormHelper;
 use Illuminate\Auth\Access\AuthorizationException;
 use Modules\Ynotz\EasyAdmin\RenderDataFormats\CreatePageData;
 
@@ -253,29 +254,35 @@ trait IsModelViewConnector{
             //attach relationship instances as per the relation
             if (!$this->processRelationsManually) {
                 foreach ($relations as $rel => $val) {
-                    $type = $this->getRelationType($rel);
-                    switch ($type) {
-                        case 'BelongsTo':
-                            // $relInstance = ($this->getRelatedModelClass($rel))::find($val);
-                            $instance->$rel()->associate($val);
-                            $instance->save();
-                            break;
-                        case 'BelongsToMany':
-                            $instance->$rel()->attach($val);
-                            break;
-                        case 'HasOne':
-                            // $relInstance = ($this->getRelatedModelClass($rel))::find($val);
-                            $instance->$rel()->save($val);
-                            break;
-                        case 'HasMany':
-                            $instance->$rel()->delete();
-                            $t = array();
-                            foreach ($val as $v) {
-                                if (is_array($v)) {
-                                    $t[] = $instance->$rel()->create($v);
+                    if (isset($this->relations()[$rel]['store_fn'])) {
+                        ($this->relations()[$rel]['store_fn'])($instance, $val);
+                    } else {
+                        $type = $this->getRelationType($rel);
+                        switch ($type) {
+                            case 'BelongsTo':
+                                $instance->$rel()->associate($val);
+                                $instance->save();
+                                break;
+                            case 'BelongsToMany':
+                                $instance->$rel()->attach($val);
+                                break;
+                            case 'HasOne':
+                                $cl = $instance->$rel()->getRelated();
+                                $fkey = $instance->$rel()->getForeignKeyName();
+                                $lkey = $instance->$rel()->getLocalKeyName();
+                                $darray = array_merge([$fkey => $instance->$lkey], $val);
+                                $cl::create($darray);
+                                break;
+                            case 'HasMany':
+                                $instance->$rel()->delete();
+                                $t = array();
+                                foreach ($val as $v) {
+                                    if (is_array($v)) {
+                                        $t[] = $instance->$rel()->create($v);
+                                    }
                                 }
-                            }
-                            $instance->$rel()->saveMany($t);
+                                $instance->$rel()->saveMany($t);
+                        }
                     }
                 }
             } else {
@@ -561,8 +568,12 @@ trait IsModelViewConnector{
 
     private function getRelatedModelClass(string $relation): string
     {
-        $obj = new ($this->modelClass);
+        info('Model Class: XX - ' . $this->modelClass);
+        $cl = $this->modelClass;
+        $obj = new $cl;
+        info(new $cl);
         $r = $obj->$relation();
+        info($r->getRelated());
         return $r->getRelated();
     }
 
