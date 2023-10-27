@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.table-mini :where(th, td) {
+    padding: 0.4rem;
+    font-size: 0.8rem;
+    line-height: 1rem;
+}
+.table :where(thead,tfoot) :where(th,td) {
+    text-transform: capitalize;
+    @apply text-sm;
+}
+
+.table td:first-child,
+.table th:first-child.sticky,
+.table th:nth-child(2).sticky,
+.table th:nth-child(3).sticky,
+.table th:nth-child(4).sticky,
+.table td:nth-child(2).sticky,
+.table td:nth-child(3).sticky,
+.table td:nth-child(4).sticky {
+    position: sticky;
+    left: 0;
+    z-index: 11;
+}
+
