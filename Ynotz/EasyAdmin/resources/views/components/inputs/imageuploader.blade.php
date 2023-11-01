@@ -580,7 +580,7 @@
                         <button type="button" tabindex="0" x-show="files.length == 0 || multiple == true" @click="initFilepicker()" class="h-12 w-32 border border-base-content border-opacity-30 border-dotted flex flex-row justify-center items-center" :class="theme == 'rounded' ? 'rounded-full' : 'rounded-md'">
                             <span class="opacity-30"><x-easyadmin::display.icon icon="easyadmin::icons.plus"/></span>&nbsp;<span class="text-xs opacity-30">Upload</span>
                         </button><div x-show="files.length > 0" class="text-warning text-xs"><span x-text="files.length"></span> image<span x-show="files.length > 1">s</span> selected</div>
-                        <input type="file" id="{{$elid}}" class="h-1 absolute -z-10 left-0" @if (isset($properties['multiple']) && $properties['multiple']) multiple @endif :required="required && files.length == 0" :accept="validations.mimeTypes.join(', ')"
+                        <input type="file" id="{{$elid}}" class="h-1 absolute -z-10 left-0" @if (isset($properties['multiple']) && $properties['multiple']) multiple @endif :required="required && files.length == 0" :accept="validations.mimeTypes != null ? validations.mimeTypes.join(', ') : '*'"
                             @change="doUpload()"
                             >
                     </div>

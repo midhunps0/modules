@@ -7,10 +7,23 @@
 ])
 @php
     $name = $element['key'];
-    if ($s = strpos($name, '[', 0)) {
-        $relArr = explode('[', $name);
+    if (str_contains($name, '.')) {
+        $relArr = explode('.', $name);
+        $name = $relArr[0];
+        for ($i=1; $i < count($relArr); $i++) {
+            $name = $name . '[' . $relArr[$i] . ']';
+        }
         $relName = $relArr[0];
-        $relField = explode(']', $relArr[1])[0];
+        unset($relArr[0]);
+        $relFields = $relArr;
+        $theVal = $_old[$relName] ?? null;
+        if (isset($theVal)) {
+            foreach ($relFields as $field) {
+                $theVal = $theVal->$field;
+            }
+        }
+    } else {
+        $theVal = $_old[$name] ?? '';
     }
     $type = $element['input_type'];
     $label = $element['label'];
@@ -167,11 +180,7 @@
             @endforeach
         @endforeach
         @endif
-        @if (isset($relName))
-            textval = '{{$_old[$relName]->$relField}}';
-        @elseif (isset($_old[$name]))
-            textval = '{{$_old[$name]}}';
-        @endif
+        textval = '{{$theVal}}';
         $watch('showelement', function (val) {required = val; console.log('text required'); console.log(val);});
     "
     @class([

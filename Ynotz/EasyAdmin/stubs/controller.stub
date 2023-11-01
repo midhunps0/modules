@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Modules\Ynotz\EasyAdmin\Traits\HasMVConnector;
 use Modules\Ynotz\SmartPages\Http\Controllers\SmartController;
 
-class ArticleController extends SmartController
+class $CLASS_NAME$Controller extends SmartController
 {
     use HasMVConnector;
 

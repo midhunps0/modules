@@ -57,7 +57,7 @@ class $CLASS_NAME$Service implements ModelViewConnector {
     }
     protected function getPageTitle(): string
     {
-        return '$CLASS_NAME_PLURAL$';
+        return "$CLASS_NAME_PLURAL$";
     }
 
     protected function getIndexHeaders(): array
@@ -167,7 +167,7 @@ class $CLASS_NAME$Service implements ModelViewConnector {
                 items: $this->getEditFormElements(),
                 label_position: 'top'
             ),
-            instance: ($this->modelClass)::find($id)
+            instance: $this->getQuery()->where('id', $id)->get()->first()
         );
     }
 

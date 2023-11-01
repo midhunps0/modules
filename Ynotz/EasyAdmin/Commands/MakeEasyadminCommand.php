@@ -97,20 +97,23 @@ class MakeEasyadminCommand extends Command
     {
         $arr = [];
         $classNameSingular = $this->getSingularClassName($this->argument('name'));
-        $classNamePluralLower = Str::lower(Str::plural($classNameSingular));
+        $classNamePlural = Str::plural($classNameSingular);
+        $classNamePluralLower = Str::lower($classNamePlural);
         switch($type) {
             case 'controller':
                 $arr = [
                     'NAMESPACE'         => 'App\Http\Controllers',
                     'CLASS_NAME'        => $classNameSingular,
-                    'CLASS_NAME_PLURAL_LOWER' => $classNamePluralLower
+                    'CLASS_NAME_PLURAL_LOWER' => $classNamePluralLower,
+                    'CLASS_NAME_PLURAL' => $classNamePlural
                 ];
                 break;
             case 'service':
                 $arr = [
                     'NAMESPACE'         => 'App\Services',
                     'CLASS_NAME'        => $classNameSingular,
-                    'CLASS_NAME_PLURAL_LOWER' => $classNamePluralLower
+                    'CLASS_NAME_PLURAL_LOWER' => $classNamePluralLower,
+                    'CLASS_NAME_PLURAL' => $classNamePlural
                 ];
                 break;
         }

@@ -255,7 +255,7 @@ trait IsModelViewConnector{
             if (!$this->processRelationsManually) {
                 foreach ($relations as $rel => $val) {
                     if (isset($this->relations()[$rel]['store_fn'])) {
-                        ($this->relations()[$rel]['store_fn'])($instance, $val);
+                        ($this->relations()[$rel]['store_fn'])($instance, $val, $data);
                     } else {
                         $type = $this->getRelationType($rel);
                         switch ($type) {
@@ -336,29 +336,33 @@ trait IsModelViewConnector{
             if (!$this->processRelationsManually) {
             //attach relationship instances as per the relation
                 foreach ($relations as $rel => $val) {
-                    $type = $this->getRelationType($rel);
-                    switch ($type) {
-                        case 'BelongsTo':
-                            $instance->$rel()->associate($val);
-                            $instance->save();
-                            break;
-                        case 'BelongsToMany':
-                            $instance->$rel()->sync($val);
-                            break;
-                        case 'HasOne':
-                            $relInst = $instance->$rel;
-                            $relInst->update($val);
-                            break;
-                        case 'HasMany':
-                            $instance->$rel()->delete();
-                            $t = array();
-                            foreach ($val as $v) {
-                                if (is_array($v)) {
-                                    $t[] = $instance->$rel()->create($v);
+                    if (isset($this->relations()[$rel]['update_fn'])) {
+                        ($this->relations()[$rel]['update_fn'])($instance, $val, $data);
+                    } else {
+                        $type = $this->getRelationType($rel);
+                        switch ($type) {
+                            case 'BelongsTo':
+                                $instance->$rel()->associate($val);
+                                $instance->save();
+                                break;
+                            case 'BelongsToMany':
+                                $instance->$rel()->sync($val);
+                                break;
+                            case 'HasOne':
+                                $relInst = $instance->$rel;
+                                $relInst->update($val);
+                                break;
+                            case 'HasMany':
+                                $instance->$rel()->delete();
+                                $t = array();
+                                foreach ($val as $v) {
+                                    if (is_array($v)) {
+                                        $t[] = $instance->$rel()->create($v);
+                                    }
                                 }
-                            }
-                            $instance->$rel()->saveMany($t);
-                            break;
+                                $instance->$rel()->saveMany($t);
+                                break;
+                        }
                     }
                 }
             } else {
