@@ -191,7 +191,7 @@ class $CLASS_NAME$Service implements ModelViewConnector {
 
     private function getQuery()
     {
-        $this->modelClass::query();
+        return $this->modelClass::query();
         // // Example:
         // return $this->modelClass::query()->with([
         //     'author' => function ($query) {
