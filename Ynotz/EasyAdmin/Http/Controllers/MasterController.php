@@ -20,7 +20,7 @@ class MasterController extends SmartController
     {
         try {
             $this->setData(
-                (app()->make($service))->$method($this->request->all())
+                (app()->make(Str::replace('::', '\\', $service)))->$method($this->request->all())
             );
             return response()->json([
                 'success' => true,

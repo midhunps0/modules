@@ -15,8 +15,9 @@ class AppSettingsController extends SmartController
 {
     use HasMVConnector;
 
-    public function __construct(public AppSettingService $connectorService, Request $request){
+    public function __construct(AppSettingService $connectorService, Request $request){
         parent::__construct($request);
+        $this->connectorService = $connectorService;
     }
 
     public function edit($id)

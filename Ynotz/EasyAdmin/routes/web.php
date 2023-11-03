@@ -5,7 +5,7 @@ use Modules\Ynotz\EasyAdmin\Http\Controllers\MasterController;
 
 Route::group(['middleware' => ['web', 'auth', 'verified'], 'prefix' => 'manage'], function () {
     Route::get('dashboard', [config('easyadmin.dashboard_controller'), config('easyadmin.dashboard_method')])->name('dashboard');
-    Route::get('eaasyadmin/fetch/{service}/{method}', [MasterController::class, 'fetch'])->name('easyadmin.fetch');
+    Route::get('easyadmin/fetch/{service}/{method}', [MasterController::class, 'fetch'])->name('easyadmin.fetch');
 });
 ?>
 
