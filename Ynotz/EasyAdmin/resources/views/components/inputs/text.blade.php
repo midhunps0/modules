@@ -78,8 +78,6 @@
                 } else {
                     let url = '{{route('easyadmin.fetch', ['service' => '__service__', 'method' => '__method__'])}}';
                     let src = this.listeners[source].serviceclass;
-                    console.log('src');
-                    console.log(src);
                     url = url.replace('__service__', src.replace(/\\/g, '::'));
                     url = url.replace('__method__', this.listeners[source].method);
                     axios.get(

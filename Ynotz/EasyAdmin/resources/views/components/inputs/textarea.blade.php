@@ -62,7 +62,8 @@
                     console.log('textval reset!');
                 } else {
                     let url = '{{route('easyadmin.fetch', ['service' => '__service__', 'method' => '__method__'])}}';
-                    url = url.replace('__service__', this.listeners[source].serviceclass);
+                    let src = this.listeners[source].serviceclass;
+                    url = url.replace('__service__', src.replace(/\\/g, '::'));
                     url = url.replace('__method__', this.listeners[source].method);
                     axios.get(
                         url,
@@ -143,14 +144,7 @@
             required = true;
         @endif
         @if (isset($update_on_events))
-            @foreach ($update_on_events as $source => $api)
-                listeners.{{$source}} = {
-                    serviceclass: @if (isset($api[0])) '{{$api[0]}}' @else null @endif,
-                    method: @if (isset($api[1])) '{{$api[1]}}' @else null @endif,
-                };
-            @endforeach
-            console.log('{{$name}} listeners: ');
-            console.log(listeners);
+            listeners = {{Js::from($update_on_events)}};
         @endif
         @if (isset($reset_on_events))
             @foreach ($reset_on_events as $source)

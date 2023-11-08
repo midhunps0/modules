@@ -58,7 +58,6 @@
     } elseif (isset($_old[$name])) {
         $existing_values = $_old[$name];
     }
-    // dd($existing_values);
 @endphp
 @if ($authorised)
 <div x-data="
