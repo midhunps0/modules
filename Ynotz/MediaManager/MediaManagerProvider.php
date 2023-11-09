@@ -28,6 +28,6 @@ class MediaManagerProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/config/mediaManager.php' => config_path('mediaManager.php'),
 
-        ], 'mediamanager-config');
+        ], ['mediamanager-config', 'mediamanager', 'base-modules']);
     }
 }

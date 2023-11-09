@@ -42,6 +42,6 @@ class SmartPagesProvider extends ServiceProvider
             __DIR__.'/resources/js/app-example.js' => resource_path('/js/app-example.js'),
             __DIR__.'/resources/js/components' => resource_path('/js/components'),
 
-        ], 'smartpages-js');
+        ], ['smartpages-js', 'smartpages', 'base-modules']);
     }
 }

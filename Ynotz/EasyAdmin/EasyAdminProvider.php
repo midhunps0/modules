@@ -46,7 +46,7 @@ class EasyAdminProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/resources/lang' => $this->app->langPath('ynotz/easyadmin'),
 
-        ], 'easyadmin-lang');
+        ], ['easyadmin-lang', 'easyadmin', 'base-modules']);
         $this->app->bind(DashboardServiceInterface::class, config('easyadmin.dashboard_service'));
         $this->app->bind(SidebarServiceInterface::class, config('easyadmin.sidebar_service'));
 
