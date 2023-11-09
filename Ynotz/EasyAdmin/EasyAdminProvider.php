@@ -42,7 +42,7 @@ class EasyAdminProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/config/easyadmin.php' => config_path('easyadmin.php'),
 
-        ], 'easyadmin-config');
+        ], ['easyadmin-config', 'easyadmin', 'base-modules']);
         $this->publishes([
             __DIR__.'/resources/lang' => $this->app->langPath('ynotz/easyadmin'),
 
