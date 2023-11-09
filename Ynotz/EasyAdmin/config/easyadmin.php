@@ -16,7 +16,10 @@ return [
     'dashboard_service' => DashboardService::class,
     'dashboard_controller' => DashboardController::class,
     'dashboard_method' => 'dashboard',
-    'sidebar_service' => SidebarService::class,
+    'sidebar_services' => [
+        SidebarService::class,
+        // App\Services\SidebarService::class,
+    ],
     'dashboard_view' => 'easyadmin::admin.dashboard',
     'enforce_validation' => true
 ];
