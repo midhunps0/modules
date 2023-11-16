@@ -171,6 +171,16 @@ class $CLASS_NAME$Service implements ModelViewConnector {
         );
     }
 
+    /*
+    public function getShowPageData($id): ShowPageData
+    {
+        return new ShowPageData(
+            Str::ucfirst($this->getModelShortName()),
+            $this->getQuery()->where($this->key, $id)->get()->first()
+        );
+    }
+    */
+
     private function formElements(): array
     {
         return [];

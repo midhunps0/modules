@@ -13,6 +13,7 @@ use Modules\Ynotz\EasyAdmin\InputUpdateResponse;
 use Modules\Ynotz\EasyAdmin\Services\FormHelper;
 use Illuminate\Auth\Access\AuthorizationException;
 use Modules\Ynotz\EasyAdmin\RenderDataFormats\CreatePageData;
+use Modules\Ynotz\EasyAdmin\RenderDataFormats\ShowPageData;
 
 trait IsModelViewConnector{
     protected $modelClass;
@@ -137,9 +138,12 @@ trait IsModelViewConnector{
         return $this->query ?? $this->modelClass::query();
     }
 
-    public function getShowPageData()
+    public function getShowPageData($id): ShowPageData
     {
-        return ['title' => Str::ucfirst($this->getModelShortName()), 'instance' => $this->getQuery()->get()->first() ];
+        return new ShowPageData(
+            Str::ucfirst($this->getModelShortName()),
+            $this->getQuery()->where($this->key, $id)->get()->first()
+        );
     }
 
     private function getItemIds($results) {
