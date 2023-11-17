@@ -66,7 +66,7 @@ trait OwnsMedia
     public function addOneMediaFromEAInput(string $property, string $input): void
     {
         if (strpos($input, config('mediaManager.ulid_separator')) === false) {
-            $arr = explode('_::_', $input);
+            $arr = explode(config('mediaManager.tmp_separator'), $input);
             $ulid = $arr[0];
             $fname = $arr[1];
             $tempDisk = config('mediaManager.temp_disk');

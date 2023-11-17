@@ -16,8 +16,17 @@ class MediaController extends SmartController
 
         $name = $file->getClientOriginalName();
         $name = str_replace($file->getClientOriginalExtension(), '', $name);
-        $name = Str::swap([config('mediaManager.ulid_separator') => '', '_::_' => '', ' ' => '_', '.' =>'', '-' => ''], $name);
-        $name = time().rand(0,99).'_::_'.substr($name, 0, 20).'.'.$file->extension();
+        $name = Str::swap(
+            [
+                config('mediaManager.ulid_separator') => '',
+                config('mediaManager.tmp_separator') => '',
+                ' ' => '_',
+                '.' =>'',
+                '-' => ''
+            ],
+            $name
+        );
+        $name = time().rand(0,99).config('mediaManager.tmp_separator').substr($name, 0, 20).'.'.$file->extension();
 
         $tempFolder = config('mediaManager.temp_folder');
         $tempDisk = config('mediaManager.temp_disk');
