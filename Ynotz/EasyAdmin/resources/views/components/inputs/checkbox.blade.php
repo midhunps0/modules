@@ -126,7 +126,7 @@
         @if (isset($displayText) && is_array($displayText))
             displayText = true;
             onText = '{{$displayText[0]}}';
-            offText = '{{$displayText[1];}}'
+            offText = '{{$displayText[1]}}';
         @endif
         @if ($xerrors->has($name))
             ers = {{json_encode($xerrors->get($name))}};
