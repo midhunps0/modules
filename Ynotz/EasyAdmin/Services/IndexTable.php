@@ -69,7 +69,7 @@ class IndexTable
             $data['relation'] = $relation;
         }
         if (isset($link)) {
-            $data['relation'] = $link;
+            $data['link'] = $link;
         }
 
         $this->row[] = $data;
