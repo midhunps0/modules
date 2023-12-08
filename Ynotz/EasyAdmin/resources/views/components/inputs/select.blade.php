@@ -342,7 +342,7 @@
         @if (isset($fetch_url))
             fetchUrl = '{{$fetch_url}}';
         @endif
-        ops = JSON.parse('{{json_encode($options)}}');
+        ops = {{Js::from($options)}};
         {{-- select_options.push({key: '', text: '{{$none_selected}}'}); --}}
 
         @if ($options_type == 'key_value')
