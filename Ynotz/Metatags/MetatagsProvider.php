@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Modules\Ynotz\SmartPages\View\Composers\SidebarComposer;
 
-class MetaTagsProvider extends ServiceProvider
+class MetatagsProvider extends ServiceProvider
 {
     /**
      * Register services.
