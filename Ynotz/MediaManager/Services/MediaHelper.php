@@ -1,5 +1,5 @@
 <?php
-namespace Modules\Ynotz\MediaManager\Helpers;
+namespace Modules\Ynotz\MediaManager\Services;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
