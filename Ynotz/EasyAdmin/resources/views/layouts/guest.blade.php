@@ -22,10 +22,12 @@ x-init="
     window.landingUrl = '{{\Request::getRequestUri()}}'; window.landingRoute = '{{ Route::currentRouteName() }}'; window.renderedpanel = 'pagecontent';
 
     let allTags = {{Js::from(session()->get('metatags'))}};
-    metatags = allTags.map((t) => {
-        t.is_name = typeof t.name != 'undefined';
-        return t;
-    });
+    if(allTags != null) {
+        metatags = allTags.map((t) => {
+            t.is_name = typeof t.name != 'undefined';
+            return t;
+        });
+}
     if (metatags.length > 0) {
         theLink = window.landunUrl;
         setTimeout(() => {
@@ -73,7 +75,7 @@ x-init="
         @stack('header_js')
     </head>
     <body x-data="initPage" x-init="initAction();"
-        @linkaction.window="initialised = false; fetchLink($event.detail);"
+        @linkaction.window="initialised = false; fetchLink($event.detail); "
         @formsubmit.window="postForm($event.detail);"
         @popstate.window="historyAction($event)"
         class="font-sans antialiased text-sm transition-colors">
