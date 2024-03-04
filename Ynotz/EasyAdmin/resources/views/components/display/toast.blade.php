@@ -1,4 +1,4 @@
-<div x-data="{
+<div x-cloak x-data="{
         message: '',
         showmodal: false,
         mode: 'success',

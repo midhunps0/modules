@@ -33,6 +33,7 @@ trait IsModelViewConnector{
     protected $processRelationsManually = false;
     protected $processMediaManually = false;
     protected $selectionEnabled = false;
+    protected $exportsEnabled = true;
 
     public $downloadFileName = 'results';
 
