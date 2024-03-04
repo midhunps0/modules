@@ -16,16 +16,9 @@ class PermissionsController extends SmartController
     public function __construct(PermissionService $connectorService, Request $request){
         parent::__construct($request);
         $this->connectorService = $connectorService;
-        $this->itemName = 'permission';
-        $this->indexView = 'easyadmin::admin.indexpanel';
-        $this->createView = 'accesscontrol::permissions.create';
-        $this->editView = 'accesscontrol::permissions.edit';
-        $this->modelClass = Permission::class;
-        $this->resultsName = 'permissions';
-    }
-
-    public function store(PermissionsStoreRequest $request)
-    {
-        return $this->doStore($request);
+        // $this->itemName = 'districts';
+        // $this->indexView = 'easyadmin::admin.indexpanel';
+        // $this->createView = 'accesscontrol::roles.create';
+        // $this->editView = 'accesscontrol::roles.edit';
     }
 }

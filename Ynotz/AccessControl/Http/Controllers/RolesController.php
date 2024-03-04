@@ -16,15 +16,19 @@ class RolesController extends SmartController
     public function __construct(RoleService $connectorService, Request $request){
         parent::__construct($request);
         $this->connectorService = $connectorService;
-        $this->itemName = 'role';
-        $this->indexView = 'easyadmin::admin.indexpanel';
-        $this->createView = 'accesscontrol::roles.create';
-        $this->editView = 'accesscontrol::roles.edit';
-        $this->modelClass = Role::class;
     }
 
-    public function store(RolesStoreRequest $request)
+    public function rolesPermissions()
     {
-        return $this->doStore($request);
+        return $this->buildResponse(
+            'easyadmin::admin.crossaction',
+            $this->connectorService->rolesPermissionsData()
+        );
+    }
+
+    public function permissionUpdate(Request $request)
+    {
+        $result = $this->connectorService->permissionUpdate($request->all());
+        return response()->json(['success' => $result]);
     }
 }

@@ -1,130 +1,92 @@
 <?php
 namespace Modules\Ynotz\AccessControl\Services;
 
-
-use Illuminate\Support\Str;
+use App\Models\User;
+use App\Models\District;
+use App\Services\RoleService;
 use Illuminate\Support\Facades\Hash;
 use Modules\Ynotz\AccessControl\Models\Role;
-// use Modules\Ynotz\AccessControl\Models\User;
-use App\Models\User;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Modules\Ynotz\EasyAdmin\Services\FormHelper;
-use Modules\Ynotz\AccessControl\Services\RoleService;
+use Modules\Ynotz\EasyAdmin\Services\IndexTable;
+use Modules\Ynotz\AuditLog\Events\BusinessActionEvent;
 use Modules\Ynotz\EasyAdmin\Traits\IsModelViewConnector;
 use Modules\Ynotz\EasyAdmin\Contracts\ModelViewConnector;
-use Modules\Ynotz\EasyAdmin\InputUpdateResponse;
-use Modules\Ynotz\MediaManager\Services\EAInputMediaValidator;
+use Modules\Ynotz\EasyAdmin\RenderDataFormats\CreatePageData;
+use Modules\Ynotz\EasyAdmin\RenderDataFormats\EditPageData;
 
-class UserService implements ModelViewConnector
-{
+class UserService implements ModelViewConnector {
     use IsModelViewConnector;
-
-    public function getStoreValidationRules(): array
-    {
-        return [
-            'name' => 'required|min:3',
-            'password' => 'required|min:6',
-            'email' => 'required|email|unique:users,email',
-            'roles' => 'required',
-            // 'photo' => (new EAInputMediaValidator())
-            //     ->maxSize(1, 'mb')
-            //     ->mimeTypes(['jpeg', 'jpg', 'png'])
-            //     ->getRules(),
-            'photo.*' => (new EAInputMediaValidator())
-                ->maxSize(1, 'mb')
-                ->mimeTypes(['jpeg', 'jpg', 'png'])
-                ->getRules()
-        ];
-    }
-
-    public $mediaFields = [
-        'photo' => []
-    ];
+    private $indexTable;
 
     public function __construct()
     {
         $this->modelClass = User::class;
+        $this->indexTable = new IndexTable();
+        $this->selectionEnabled = false;
     }
 
-    private function getQuery()
-    {
-        return $this->modelClass::query()->with(['roles' => function ($query) {
-            $query->select('name', 'id');
-        }]);
-    }
-
-    protected function getIndexHeaders(): array
-    {
-        return [
-            [
-                'title' => 'Name',
-                'sort' => ['key' => 'name'],
-                'search' => ['key' => 'name', 'condition' => 'ct'],
-                'search_label' => 'Search Users',
-                'style' => 'width: 400px;'
-            ],
-            [
-                'title' => 'Roles',
-                'filter' => [
-                    'key' => 'roles',
-                    'options' => Role::all()->pluck('name', 'id')
-                ],
-                'style' => 'width: 300px;'
-            ],
-            [
-                'title' => 'Action'
-            ]
-        ];
-    }
-
-    protected function getIndexColumns(): array
-    {
-        return [
-            [
-                'fields' => ['name'],
-                'component' => 'text',
-                'link' => [
-                    'route' => 'users.show',
-                    'key' => 'id'
-                ]
-            ],
-            [
-                'fields' => ['id', 'name'],
-                'relation' => 'roles',
-                'component' => 'text'
-            ],
-            [
-                'edit_route' => 'users.edit',
-                'component' => 'actions'
-            ]
-        ];
-    }
-
-    protected function relations(): array
+    protected function relations()
     {
         return [
             'roles' => [
                 'search_column' => 'id',
-                'filter_column' => 'id'
-                // 'search_fn' => function ($query, $op, $val) {
-                //     $query->whereHas('roles', function ($q) use ($op, $val) {
-                //         $q->where('name', $op, $val);
-                //     });
-                // }
+                'filter_column' => 'id',
+                'sort_column' => 'id',
+            ],
+            'district' => [
+                'search_column' => 'id',
+                'filter_column' => 'id',
+                'sort_column' => 'id',
             ],
         ];
     }
-
-    protected function getAdvanceSearchFields(): array
+    protected function getPageTitle(): string
     {
+        return 'Users';
+    }
+
+    protected function getIndexHeaders(): array
+    {
+        return $this->indexTable->addHeaderColumn(
+            title: 'Name',
+            sort: ['key' => 'name']
+        )->addHeaderColumn(
+            title: 'Role',
+            filter: ['key' => 'roles', 'options' => Role::all()->pluck('name', 'id')]
+        )->addHeaderColumn(
+            title: 'Actions'
+        )->getHeaderRow();
+    }
+
+    protected function getIndexColumns(): array
+    {
+        return $this->indexTable->addColumn(
+            fields: ['name'],
+        )->addColumn(
+            fields: ['name'],
+            relation: 'roles',
+        )->addActionColumn(
+            editRoute: $this->getEditRoute(),
+            deleteRoute: $this->getDestroyRoute()
+        )->getRow();
+    }
+
+    public function getAdvanceSearchFields(): array
+    {
+        return [];
+        return $this->indexTable->addSearchField(
+            key: 'name',
+            displayText: 'Name',
+            valueType: 'string',
+        )->getAdvSearchFields();
         return [
-            'roles' => [
-                'key' => 'roles',
-                'text' => 'Roles',
-                'type' => 'list_numeric',
-                'inputType' => 'select',
-                'options' => Role::all()->pluck('name', 'id'),
-                'optionsType' => 'key_value' //value_only
+            'name' => [
+                'key' => 'name',
+                'text' => 'Name',
+                'type' => 'string', // numeric|string|list_numeric|list_string
+                'inputType' => 'text', // text|select
+                // 'options' => [],
+                // 'optionsType' => ''  // 'key_value' or 'value_only'
             ]
         ];
     }
@@ -133,132 +95,164 @@ class UserService implements ModelViewConnector
     {
         return [
             'id',
-            'name'
+            'name',
+            'roles.name'
         ];
     }
 
-    public function getCreatePageData(): array
+    public function getDownloadColTitles(): array
     {
         return [
-            'title' => 'Create User',
-            'form' => [
-                'id' => 'form_user_create',
-                'action_route' => 'users.store',
-                'label_position' => 'top', //top/side/float
-                'success_redirect_route' => 'users.index',
-                'items' => [
-                    FormHelper::makeInput(
-                        inputType: 'text',
-                        key: 'name',
-                        label: 'Name',
-                        properties: ['required' => true],
-                        fireInputEvent: true
-                    ),
-                    FormHelper::makeInput('email', 'email', 'Email', ['required' => true]),
-                    FormHelper::makeInput(
-                        inputType: 'text',
-                        key: 'password',
-                        label: 'Password',
-                        properties: ['required' => true, 'minlength' => 6],
-                    ),
-                    // FormHelper::makeInput(
-                    //     inputType: 'text',
-                    //     key: 'useslug',
-                    //     label: 'Use Slug?',
-                    //     properties: ['required' => true],
-                    //     fireInputEvent: true
-                    // ),
-                    // FormHelper::makeInput(
-                    //     inputType: 'text',
-                    //     key: 'slug',
-                    //     label: 'Slug',
-                    //     properties: ['required' => true],
-                    //     updateOnEvents: [
-                    //         'name' => [
-                    //             urlencode(Static::class),
-                    //             'getSlug'
-                    //         ]
-                    //     ],
-                    //     // toggleOnEvents: ['useslug' => [['==', 'No', false], ['==', 'Yes', true]]],
-                    //     show: true,
-                    //     authorised: true,
-                    // ),
-                    // FormHelper::makeSelect(
-                    //     key: 'roles',
-                    //     label: 'Role',
-                    //     options: Role::all(),
-                    //     options_type: 'collection',
-                    //     options_id_key: 'id',
-                    //     options_text_key: 'name',
-                    //     options_src: [RoleService::class, 'suggestList'],
-                    //     properties: [
-                    //         'required' => true,
-                    //         'multiple' => false
-                    //     ],
-                    // ),
-                    FormHelper::makeSuggestlist(
-                        key: 'role',
-                        label: 'Role',
-                        options_src: [RoleService::class, 'suggestList'],
-                        options_type: 'collection',
-                        options_id_key: 'id',
-                        options_text_key: 'name',
-                        resetOnEvents: ['name'],
-                        properties: [
-                            'required' => true,
-                            'multiple' => true
-                        ],
-                        authorised: true,
-                    ),
-                    FormHelper::makeImageUploader(
-                        key: 'photo',
-                        label: 'Photo',
-                        properties: ['required' => true, 'multiple' => true],
-                        theme: 'regular',
-                        allowGallery: true,
-                        validations: [
-                            'max_size' => '1 mb',
-                            'mime_types' => ['image/jpg', 'image/jpeg', 'image/png']
-                            ]
-                        // fireInputEvent: true
-                    ),
-                    FormHelper::makeDatePicker(
-                        key: 'dob',
-                        label: 'Date of birth',
-                    ),
-                    FormHelper::makeCheckbox(
-                        key: 'verified',
-                        label: 'Is verified?',
-                        toggle: true,
-                        displayText: ['Yes', 'No']
-                    )
-                ]
-            ]
+            'roles.name' => 'Role'
         ];
     }
 
-    protected function getRelationQuery(int $id = null) {
-        return null;
-    }
-
-    protected function accessCheck($item): bool
+    public function getCreatePageData(): CreatePageData
     {
-        return true;
-    }
-
-    public function getSlug($text): InputUpdateResponse
-    {
-        return new InputUpdateResponse(
-            Str::slug($text),
-            'ok',
-            true
+        return new CreatePageData(
+            title: 'Users',
+            form: FormHelper::makeForm(
+                title: 'Create User',
+                id: 'form_users_create',
+                action_route: 'users.store',
+                success_redirect_route: 'users.index',
+                items: $this->getCreateFormElements(),
+                label_position: 'side'
+            )
         );
     }
 
-    private function processBeforeStore(array $data): array
+    public function getEditPageData($id): EditPageData
     {
+        return new EditPageData(
+            title: 'users',
+            form: FormHelper::makeEditForm(
+                title: 'Edit User',
+                id: 'form_users_create',
+                action_route: 'users.update',
+                action_route_params: ['id' => $id],
+                success_redirect_route: 'users.index',
+                items: $this->getEditFormElements(),
+                label_position: 'side'
+            ),
+            instance: ($this->modelClass)::find($id)
+        );
+    }
+
+    private function formElements(): array
+    {
+        return [
+            FormHelper::makeInput(
+                inputType: 'text',
+                key: 'name',
+                label: 'Name',
+                properties: ['required' => true]
+            ),
+            FormHelper::makeInput(
+                inputType: 'text',
+                key: 'email',
+                label: 'Email',
+                properties: ['required' => true,]
+            ),
+            FormHelper::makeInput(
+                inputType: 'text',
+                key: 'password',
+                label: 'Password',
+                properties: ['required' => true,],
+                formTypes: ['create']
+            ),
+            FormHelper::makeSelect(
+                key: 'roles',
+                label: 'Role',
+                options: Role::all(),
+                options_type: 'collection',
+                options_id_key: 'id',
+                options_text_key: 'name',
+                options_src: [RoleService::class, 'suggestList'],
+                properties: [
+                    'required' => true,
+                    'multiple' => true
+                ],
+            ),
+            // FormHelper::makeCheckbox(
+            //     key: 'verified',
+            //     label: 'Is verified?',
+            //     toggle: true,
+            //     displayText: ['Yes', 'No']
+            // )
+        ];
+    }
+
+    private function getQuery()
+    {
+        return $this->modelClass::query()->with([
+            'roles' => function ($query) {
+                $query->select('id', 'name');
+            }
+        ]);
+    }
+
+    public function getStoreValidationRules(): array
+    {
+        return [
+            'name' => ['required', 'string'],
+            'username' => ['required', 'string'],
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+            'roles.*' => ['required'],
+
+        ];
+    }
+
+    public function getUpdateValidationRules($id): array
+    {
+        $arr = $this->getStoreValidationRules();
+        unset($arr['password']);
+        return $arr;
+    }
+
+    public function processBeforeStore(array $data): array
+    {
+        $data['district_id'] = $data['district'];
+        unset($data['district']);
         $data['password'] = Hash::make($data['password']);
+
         return $data;
     }
+
+    // public function processBeforeUpdate(array $data): array
+    // {
+    //     $data['district_id'] = $data['district'];
+    //     unset($data['district']);
+
+    //     return $data;
+    // }
+
+    public function processAfterStore($instance): void
+    {
+        BusinessActionEvent::dispatch(
+            User::class,
+            $instance->id,
+            'Created',
+            auth()->user()->id,
+            null,
+            $instance,
+            'Created User: '.$instance->name.', id: '.$instance->id,
+        );
+    }
+
+    public function processAfterUpdate($oldInstance, $instance): void
+    {
+        BusinessActionEvent::dispatch(
+            User::class,
+            $instance->id,
+            'Updated',
+            auth()->user()->id,
+            $oldInstance,
+            $instance,
+            'Updated User: '.$instance->name.', id: '.$instance->id,
+        );
+    }
 }
+
 ?>

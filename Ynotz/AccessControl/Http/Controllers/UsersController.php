@@ -13,13 +13,13 @@ class UsersController extends SmartController
 {
     use HasMVConnector;
 
-    public function __construct(public UserService $connectorService, Request $request){
+    public function __construct(UserService $connectorService, Request $request){
         parent::__construct($request);
         $this->itemName = 'User';
-        $this->indexView = 'easyadmin::admin.indexpanel';
-        $this->createView = 'easyadmin::admin.create';
-        $this->editView = 'accesscontrol::users.edit';
-        $this->modelClass = User::class;
+        // $this->indexView = 'easyadmin::admin.indexpanel';
+        // $this->createView = 'easyadmin::admin.create';
+        // $this->editView = 'accesscontrol::users.edit';
+        $this->connectorService = $connectorService;
     }
 
     // public function store(UsersStoreRequest $request)

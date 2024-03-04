@@ -18,7 +18,7 @@ return [
     'dashboard_method' => 'dashboard',
     'sidebar_services' => [
         SidebarService::class,
-        // App\Services\SidebarService::class,
+        App\Services\SidebarService::class,
     ],
     'dashboard_view' => 'easyadmin::admin.dashboard',
     'enforce_validation' => true

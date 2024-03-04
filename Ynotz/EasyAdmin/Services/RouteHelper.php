@@ -6,6 +6,14 @@ use Illuminate\Support\Facades\Route;
 
 class RouteHelper
 {
+    /**
+     * function getEasyRoutes
+     * Provides routes for easyadmin pages
+     * @param string $modelName Full or short name of the model
+     * @param string|null $urlFragment The part of the url slug specific to the model that comes after /manage/
+     * @param string|null $controller Default 'App\Http\Controller'
+     * @return void
+     */
     public static function getEasyRoutes(
         string $modelName,
         string $urlFragment = null,

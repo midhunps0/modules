@@ -29,7 +29,7 @@ class CreatePageData
     public function getData(): array
     {
         return [
-            'title' => 'Users',
+            'title' => $this->title,
             'form' => $this->form,
             '_old' => $this->instance
         ];
