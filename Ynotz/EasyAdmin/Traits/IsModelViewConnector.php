@@ -118,7 +118,7 @@ trait IsModelViewConnector{
             $item = $this->modelClass::with($this->showWith())
                 ->where($this->idKey, $id)->get()->first();
         } else {
-            $item = $this->modelClass::find($id);
+            $item = $this->modelClass::where($this->idKey, $id)->get()->first();
         }
         $name = ucfirst(Str::lower($this->getModelShortName()));
         if (!$this->authoriseShow($item)) {
@@ -225,12 +225,12 @@ trait IsModelViewConnector{
         ];
     }
 
-    public function getItem(string $id): Model
+    public function getItem(string $id)
     {
         return $this->modelClass::find($id);
     }
 
-    public function store(array $data)
+    public function store(array $data): Model
     {
         $data = $this->processBeforeStore($data);
         $name = ucfirst(Str::lower($this->getModelShortName()));

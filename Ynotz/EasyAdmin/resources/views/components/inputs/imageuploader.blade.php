@@ -97,10 +97,10 @@
 
                 return mt.length > 0 ? (str + ' Allowed types: ' + mt).trim() : str.trim();
             }
-            console.log('str: '+ str);
+
             return str;
         },
-        initFilepicker() {
+        filepickerInit() {
             if (!this.allowFromGallery) {
                 this.inputElement.click();
             } else {
@@ -132,7 +132,7 @@
                     sizeBytes = size * 1024;
                     break;
             }
-            console.log('size validation: '+file.size + ' < ' + this.validations.maxSize);
+
             if(file.size > sizeBytes) {
                 return false;
             }
@@ -170,7 +170,7 @@
             {{-- if (this.inputElement != null) { this.inputElement.value = ''; } --}}
         },
         compressAndUpload(img) {
-            console.log(img.file);
+
             new window.Compressor(img.file, {
                 quality: 0.6,
                 maxWidth: 750,
@@ -179,10 +179,7 @@
                 // The compression process is asynchronous,
                 // which means you have to access the `result` in the `success` hook function.
                 success: (result) => {
-                    console.log('result file');
-                    console.log(result);
                     img.file = result;
-                    console.log(img.file);
                     img.sizeValidation = this.validateSize(img.file);
                     this.files.push(img);
                     this.upoladFile(img);
@@ -265,8 +262,6 @@
                 if (!file.fromServer) {
                     this.doRemove(id);
                 } else {
-                    {{-- this.deleteItemKey = id;
-                    this.showConfirm = true; --}}
                     let theFile = this.files.filter((f) => {
                         return f.id == id;
                     })[0];
@@ -280,14 +275,12 @@
                     this.files = this.files.filter((f) => {
                         return f.id != id;
                     });
-
                 }
             }
         },
         fetchGalleryItems() {
             if (this.galleryItems.length == 0) {
                 let url = '{{route(config('mediaManager.gallery_route'))}}';
-                console.log('url: '+ url);
                 axios.get(
                     url
                 ).then((r) => {
@@ -320,8 +313,6 @@
         },
         selectGalleryItem(item) {
             item.selected = true;
-            console.log('item');
-            console.log(item);
             let check = this.files.filter((f) => {
                 return f.servername == config('mediaManager.ulid_separator')+item.ulid;
             });
@@ -399,104 +390,103 @@
     }
     "
     x-init="
-        ulidSeparator = '{{config('mediaManager.ulid_separator')}}';
-        @if (isset($element['url']))
-            url = '{{ $element['url'] }}';
-        @endif
-        @if (isset($element['delete_url']))
-            deleteUrl = '{{ $element['delete_url'] }}';
-        @endif
-        inputElement = document.getElementById('{{$elid}}');
-        @if (isset($validations) && count($validations) > 0)
-            @if (isset($validations['mime_types']))
-                validations.mimeTypes = [
-                    @foreach ($validations['mime_types'] as $type)
-                        '{{$type}}',
-                    @endforeach
-                ];
+        $nextTick(() => {
+            ulidSeparator = '{{config('mediaManager.ulid_separator')}}';
+            @if (isset($element['url']))
+                url = '{{ $element['url'] }}';
             @endif
-            @if (isset($validations['max_size']))
-                validations.maxSize = '{{$validations['max_size']}}';
+            @if (isset($element['delete_url']))
+                deleteUrl = '{{ $element['delete_url'] }}';
             @endif
-            console.log('validations');
-            console.log(validations);
-            console.log(validationsString);
-        @endif
-        @if (isset($properties['multiple']) && $properties['multiple'])
-            multiple = true;
-        @endif
-        @if (isset($existing_values))
-            @if(isset($properties['multiple']) && $properties['multiple'])
-            @foreach ($existing_values as $path => $ulid)
-                files.push({
-                    file: null,
-                    name: ('{{$path}}'.split('/')).pop(),
-                    uploaded_pc: 100,
-                    id: (new Date()).getTime() + Math.floor(Math.random() * 100),
-                    servername: ulidSeparator+'{{$ulid}}',
-                    url: '{{$path}}',
-                    show: true,
-                    fromServer: true,
-                    error: false
-                });
-            @endforeach
-            @else
-                files.push({
-                    file: null,
-                    name: ('{{$existing_values['path']}}'.split('/')).pop(),
-                    uploaded_pc: 100,
-                    id: (new Date()).getTime() + Math.floor(Math.random() * 100),
-                    servername: ulidSeparator+'{{$existing_values['ulid']}}',
-                    url: '{{$existing_values['path']}}',
-                    show: true,
-                    fromServer: true,
-                    error: false
-                });
+            inputElement = document.getElementById('{{$elid}}');
+            @if (isset($validations) && count($validations) > 0)
+                @if (isset($validations['mime_types']))
+                    validations.mimeTypes = [
+                        @foreach ($validations['mime_types'] as $type)
+                            '{{$type}}',
+                        @endforeach
+                    ];
+                @endif
+                @if (isset($validations['max_size']))
+                    validations.maxSize = '{{$validations['max_size']}}';
+                @endif
             @endif
-        @endif
-        @if (!is_array($xerrors) && $xerrors->has($name))
-            ers = {{json_encode($xerrors->get($name))}};
-            console.log(ers);
-            errors = ers.reduce((r, e) => {
-                return r + ' ' + e;
-            }, '').trim();
-        @endif
-        @if (isset($properties['required']) && $properties['required'])
-            requiredFlag = true;
-            required = files.length == 0;
-        @endif
-        @if (isset($theme))
-            theme = '{{$theme}}';
-        @endif
+            @if (isset($properties['multiple']) && $properties['multiple'])
+                multiple = true;
+            @endif
+            @if (isset($existing_values))
+                @if(isset($properties['multiple']) && $properties['multiple'])
+                @foreach ($existing_values as $path => $ulid)
+                    files.push({
+                        file: null,
+                        name: ('{{$path}}'.split('/')).pop(),
+                        uploaded_pc: 100,
+                        id: (new Date()).getTime() + Math.floor(Math.random() * 100),
+                        servername: ulidSeparator+'{{$ulid}}',
+                        url: '{{$path}}',
+                        show: true,
+                        fromServer: true,
+                        error: false
+                    });
+                @endforeach
+                @else
+                    files.push({
+                        file: null,
+                        name: ('{{$existing_values['path']}}'.split('/')).pop(),
+                        uploaded_pc: 100,
+                        id: (new Date()).getTime() + Math.floor(Math.random() * 100),
+                        servername: ulidSeparator+'{{$existing_values['ulid']}}',
+                        url: '{{$existing_values['path']}}',
+                        show: true,
+                        fromServer: true,
+                        error: false
+                    });
+                @endif
+            @endif
+            @if (!is_array($xerrors) && $xerrors->has($name))
+                ers = {{json_encode($xerrors->get($name))}};
+                errors = ers.reduce((r, e) => {
+                    return r + ' ' + e;
+                }, '').trim();
+            @endif
+            @if (isset($properties['required']) && $properties['required'])
+                requiredFlag = true;
+                required = files.length == 0;
+            @endif
+            @if (isset($theme))
+                theme = '{{$theme}}';
+            @endif
 
-        @if($fire_input_event)
-            fireInputEvent = true;
-        @endif
+            @if($fire_input_event)
+                fireInputEvent = true;
+            @endif
 
-        @if (isset($reset_on_events))
-            @foreach ($reset_on_events as $source)
-                resetSources.push('{{$source}}');
+            @if (isset($reset_on_events))
+                @foreach ($reset_on_events as $source)
+                    resetSources.push('{{$source}}');
+                @endforeach
+            @endif
+
+            @if (isset($toggle_on_events))
+            @foreach ($toggle_on_events as $source => $conditions)
+                toggleListeners.{{$source}} = [];
+                @foreach ($conditions as $condition)
+                    toggleListeners.{{$source}}.push({
+                        condition: '{{$condition[0]}}',
+                        value: '{{$condition[1]}}',
+                        show: {{$condition[2] ? 'true' : 'false'}},
+                    });
+                @endforeach
             @endforeach
-        @endif
+            @endif
 
-        @if (isset($toggle_on_events))
-        @foreach ($toggle_on_events as $source => $conditions)
-            toggleListeners.{{$source}} = [];
-            @foreach ($conditions as $condition)
-                toggleListeners.{{$source}}.push({
-                    condition: '{{$condition[0]}}',
-                    value: '{{$condition[1]}}',
-                    show: {{$condition[2] ? 'true' : 'false'}},
-                });
-            @endforeach
-        @endforeach
-        @endif
-
-        {{-- To manage the required feature when loading old values in edit --}}
-        $watch('files', (f) => {
-            if (f.length == 0 && requiredFlag) {
-                required = true;
-            }
+            {{-- To manage the required feature when loading old values in edit --}}
+            $watch('files', (f) => {
+                if (f.length == 0 && requiredFlag) {
+                    required = true;
+                }
+                return false;
+            });
         });
     "
     @if (isset($reset_on_events) && count($reset_on_events) > 0)
@@ -543,10 +533,9 @@
         {{-- } else {
             errors = '';
         } --}}
-        "
-    x-show="showelement"
->
+        ">
     <div
+        x-show="showelement"
         @class([
             'relative',
             'form-control',
@@ -576,7 +565,7 @@
                         </label>
                     @endif
                     <div class="relative">
-                        <button type="button" tabindex="0" x-show="files.length == 0 || multiple == true" @click="initFilepicker()" class="h-12 w-32 border border-base-content border-opacity-30 border-dotted flex flex-row justify-center items-center" :class="theme == 'rounded' ? 'rounded-full' : 'rounded-md'">
+                        <button type="button" tabindex="0" x-show="files.length == 0 || multiple == true" @click="filepickerInit()" class="h-12 w-32 border border-base-content border-opacity-30 border-dotted flex flex-row justify-center items-center" :class="theme == 'rounded' ? 'rounded-full' : 'rounded-md'">
                             <span class="opacity-30"><x-easyadmin::display.icon icon="easyadmin::icons.plus"/></span>&nbsp;<span class="text-xs opacity-30">Upload</span>
                         </button><div x-show="files.length > 0" class="text-warning text-xs"><span x-text="files.length"></span> image<span x-show="files.length > 1">s</span> selected</div>
                         <input type="file" id="{{$elid}}" class="h-1 absolute -z-10 left-0" @if (isset($properties['multiple']) && $properties['multiple']) multiple @endif :required="required && files.length == 0" :accept="validations.mimeTypes != null ? validations.mimeTypes.join(', ') : '*'"
@@ -592,13 +581,13 @@
                 <div class="w-11/12 overflow-x-auto flex flex-col space-y-2 max-h-60">
                     <template x-for="file in files">
                         <div x-show="file.show == true" x-transition.dutation.100ms
-                        {{-- class="px-2 py-2 space-x-4 flex flex-row border border-base-content border-opacity-20 items-center" :class="theme == 'rounded' ? 'rounded-md' : ''" --}}
-                        >
+                            {{-- class="px-2 py-2 space-x-4 flex flex-row border border-base-content border-opacity-20 items-center" :class="theme == 'rounded' ? 'rounded-md' : ''" --}}
+                            >
                             <div :class="{
                                 'relative px-2 py-2 space-x-4 flex flex-row justify-start items-center mb-2': true,
                                 'rounded-full': theme == 'rounded',
                                 'rounded-md': theme != 'rounded',
-                            }">
+                                }">
                                 <div class="relative flex flex-row space-x-2 items-center">
                                     <div x-show="file.sizeValidation && file.typeValidation || file.fromServer" class="radial-progress text-xs" :class="file.uploaded_pc == 100 ? 'text-success' : 'text-base-content opacity-30'"
                                     {{-- style="--size:0.2rem; --thickness: 2px;" --}}

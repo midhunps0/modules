@@ -27,7 +27,7 @@ x-init="
             t.is_name = typeof t.name != 'undefined';
             return t;
         });
-}
+    }
     if (metatags.length > 0) {
         theLink = window.landunUrl;
         setTimeout(() => {

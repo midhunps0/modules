@@ -30,8 +30,8 @@ interface MediaOwner
 
     public function getSingleMedia(string $property): MediaItem|null;
 
-    public function getSingleMediaPath(string $property): string|null;
+    public function getSingleMediaFilePath(string $property): string|null;
 
-    public function getSingleMediaName(string $property): string|null;
+    public function getSingleMediaFileName(string $property): string|null;
 }
 ?>
