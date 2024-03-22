@@ -2,15 +2,17 @@
 
 namespace Modules\Ynotz\MediaManager\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Modules\Ynotz\MediaManager\Models\GalleryItem;
 use Modules\Ynotz\SmartPages\Http\Controllers\SmartController;
 
 class MediaController extends SmartController
 {
-    public function fileUpload()
+    public function fileUpload(Request $request)
     {
         $file = $this->request->file('file');
 
@@ -32,10 +34,29 @@ class MediaController extends SmartController
         $tempDisk = config('mediaManager.temp_disk');
         $path = trim($file->storeAs($tempFolder.'/', $name, $tempDisk));
 
-        return response()->json([
+        $data = [
             'name' => $name,
             'url' => Storage::disk($tempDisk)->url($path)
-        ]);
+        ];
+
+        $addToGallery = $request->input('add_to_gallery');
+
+        if ($addToGallery != null && $addToGallery == true) {
+            $gi = new GalleryItem();
+            $gi->save();
+            $gi->refresh();
+            $gi->addOneMediaFromEAInput('image', $name);
+            $imageData = $gi->image;
+            $data = [
+                'name' => $gi->getSingleMediaFileName('image'),
+                'url' => $imageData['path'],
+                'ulid' => $imageData['ulid'],
+            ];
+        }
+
+        return response()->json(
+            $data
+        );
     }
 
     public function fileDelete()

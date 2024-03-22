@@ -84,7 +84,7 @@
         resetSources: [],
         toggleListeners: {},
         showelement: true,
-        ulidSeparator: '_ulid::',
+        ulidSeparator: '{{config('mediaManager.ulid_separator')}}',
         get validationsString() {
             let str = '';
             if (typeof this.validations.maxSize != 'undefined' && this.validations.maxSize != null) {

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Modules\Ynotz\EasyAdmin\Commands\MakeEasyadminCommand;
 use Modules\Ynotz\EasyAdmin\View\Composers\SidebarComposer;
-use Modules\Ynotz\EasyAdmin\Services\SidebarServiceInterface;
+use Modules\Ynotz\EasyAdmin\Contracts\SidebarServiceInterface;
 use Modules\Ynotz\EasyAdmin\Services\DashboardServiceInterface;
 
 class EasyAdminProvider extends ServiceProvider
