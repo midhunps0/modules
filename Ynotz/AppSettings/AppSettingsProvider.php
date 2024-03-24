@@ -31,6 +31,6 @@ class AppSettingsProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__.'/resources/views', 'ynotz_appsettings');
         // Blade::componentNamespace('Ynotz\AppSettings\\View\\Components', 'ynotz_appsettings');
-        $this->loadMigrationsFrom(__DIR__.'/database/migrations/');
+        $this->loadMigrationsFrom(__DIR__.'/Database/migrations/');
     }
 }
