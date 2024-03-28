@@ -94,11 +94,15 @@ class IndexTable
         bool $editPermission = true,
         bool $deletePermission = true,
         string $uniqueKey = 'id',
+        string $viewRouteUniqueKey = 'id',
+        string $viewRouteSlug = null,
         string $component = 'easyadmin::display.actions'
     ): IndexTable
     {
         $data = [
             'unique_key' => $uniqueKey,
+            'view_route_unique_key' => $viewRouteUniqueKey,
+            'view_route_slug' => $viewRouteSlug,
             'component' => $component
         ];
 

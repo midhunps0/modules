@@ -679,6 +679,11 @@ trait IsModelViewConnector{
         return Str::lower(Str::plural($this->getModelShortName())).'.create';
     }
 
+    protected function getViewRoute(): string
+    {
+        return Str::lower(Str::plural($this->getModelShortName())).'.view';
+    }
+
     protected function getEditRoute(): string
     {
         return Str::lower(Str::plural($this->getModelShortName())).'.edit';

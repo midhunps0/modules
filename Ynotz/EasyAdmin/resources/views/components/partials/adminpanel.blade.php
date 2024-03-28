@@ -25,7 +25,7 @@
 
         </div>
         <div x-show="ajaxLoading" class="h-full w-full absolute top-0 left-0 z-50 bg-base-200 opacity-30 flex flex-row justify-center items-center">
-            <img src="/images/loading.gif" class="h-10 w-10" alt="">
+            <img src="/images/loading.gif" class="h-10 w-10" alt="" />
         </div>
     </div>
 </x-easyadmin::app-layout>

@@ -13,7 +13,7 @@ class ShowPageData
      * @param string $title
      * @param Object $instance
      */
-    public function __construct(string $title, Object $instance, array $data = null)
+    public function __construct(string $title, Object $instance, array|null $data = null)
     {
         $this->title = $title;
         $this->instance = $instance;
