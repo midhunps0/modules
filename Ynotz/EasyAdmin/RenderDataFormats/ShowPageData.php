@@ -5,7 +5,7 @@ class ShowPageData
 {
     public string $title;
     public Object $instance;
-    public array $data;
+    public array|null $data;
 
     /**
      * construct
@@ -13,7 +13,7 @@ class ShowPageData
      * @param string $title
      * @param Object $instance
      */
-    public function __construct(string $title, Object $instance, array|null $data = null)
+    public function __construct(string $title, Object $instance, array $data = null)
     {
         $this->title = $title;
         $this->instance = $instance;
