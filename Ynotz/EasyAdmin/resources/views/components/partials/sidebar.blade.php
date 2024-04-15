@@ -6,7 +6,7 @@
     @resize.window="hidden = window.innerWidth < 768; if(hidden){
         $dispatch('sidebarresize', {'collapsed': false});
     }"
-    class="overflow-x-hidden fixed top-0 left-0 z-50 md:relative bg-base-100 md:w-auto min-w-fit ransition-all h-full"
+    class="overflow-x-hidden fixed top-0 left-0 z-50 md:relative bg-base-100 md:w-auto min-w-fit ransition-all h-full max-w-full"
     :class="hidden ? 'hidden' : 'md:block w-full'">
     <div x-show="!hidden" class="md:hidden w-full text-right pt-2 fixed top-2 right-2 z-20 mb-20">
         <button x-show="!hidden" @click.prevent.stop="hidden=true;" class="btn btn-md text-warning"><x-easyadmin::display.icon icon="easyadmin::icons.close"/></button>
