@@ -400,6 +400,9 @@ trait IsModelViewConnector{
     public function processAfterUpdate($oldInstance, $instance): void
     {}
 
+    public function processAfterDelete($id): void
+    {}
+
     public function destroy($id)
     {
         $item = $this->modelClass::find($id);
@@ -822,6 +825,9 @@ trait IsModelViewConnector{
     {
         return $data;
     }
+
+    public function processBeforeDelete($id): void
+    {}
 
     public function prepareForStoreValidation(array $data): array
     {

@@ -291,7 +291,9 @@ trait HasMVConnector {
     public function destroy($id)
     {
         try {
-           $msg = $this->connectorService->destroy($id);
+            $this->connectorService->processBeforeDelete();
+            $msg = $this->connectorService->destroy($id);
+            $this->connectorService->processAfterDelete();
             return response()->json([
                 'success' => true,
                 'message' => 'Item deleted '.$msg
