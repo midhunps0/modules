@@ -1,5 +1,5 @@
 <nav x-ref="appnav" x-data="{ open: false, height: $el.offsetHeight, actualHeight: $el.offsetHeight, opacity: 1 }"
-    class="bg-base-100 border-b border-base-200 transition-all duration-200"
+    class="bg-base-100 transition-all duration-200"
 
     :style="'height: ' + height + 'px; opacity: '+opacity"
     x-init="
