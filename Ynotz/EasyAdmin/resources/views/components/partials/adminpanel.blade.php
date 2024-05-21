@@ -1,6 +1,6 @@
 <x-easyadmin::app-layout>
-    <div class="relative py-1 flex-grow flex flex-row h-full items-stretch w-full space-x-1">
-        <div class="bg-base-100 overflow-hidden shadow-sm sm:rounded-md wfit">
+    <div class="py-1 flex-grow flex flex-row h-full items-stretch w-full space-x-1">
+        <div class="bg-base-100 overflow-hidden shadow-sm sm:rounded-md min-w-fit">
             <x-easyadmin::partials.sidebar />
         </div>
         <div x-data
