@@ -1,13 +1,19 @@
-<div x-data="{hidden: false}"
+<!-- SIDEBAR --->
+<div x-data="{hidden: false, smallScreen: false}"
     x-init="
-        setTimeout(() => {hidden = window.innerWidth < 768;}, 100);
+        setTimeout(() => {
+            hidden = window.innerWidth < 768;
+            smallScreen = window.innerWidth < 768;
+            console.log(`hidden: ${hidden}`)
+        }, 100);
     "
     @sidebarvisibility.window="hidden=$event.detail.hidden;"
     @resize.window="hidden = window.innerWidth < 768; if(hidden){
         $dispatch('sidebarresize', {'collapsed': false});
     }"
-    class="overflow-x-hidden absolute top-0 left-0 z-50 md:relative bg-base-100 md:w-auto min-w-fit transition-all h-full max-w-full"
-    :class="hidden ? 'hidden' : 'md:block w-full'">
+    class="overflow-x-hidden md:relative bg-base-100 md:w-auto min-w-fit transition-all h-full max-w-full"
+    :class="smallScreen ? 'fixed w-full top-0 left-0 z-50' : ''"
+    x-show="!hidden">
     <div x-show="!hidden" class="md:hidden w-full text-right pt-2 fixed top-2 right-2 z-20 mb-20">
         <button x-show="!hidden" @click.prevent.stop="hidden=true;" class="btn btn-md text-warning"><x-easyadmin::display.icon icon="easyadmin::icons.close"/></button>
     </div>
