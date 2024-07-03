@@ -537,8 +537,10 @@ trait IsModelViewConnector{
     private function applyRelationSearch(Builder $query, $relName, $key, $op, $val): void
     {
         // If isset(search_fn): execute it
+        info('$op');
+        info($op);
         if (isset($this->relations()[$relName]['search_fn'])) {
-            $this->relations()[$relName]['search_fn']($query, $op['op'], $op['val']);
+            $this->relations()[$relName]['search_fn']($query, $op, $val);
         } else {
             // Get relation type
             $type = $this->getRelationType($relName);
