@@ -82,12 +82,21 @@ class MetatagHelper
         session()->put('metatags', $metatags);
     }
 
-    public function addTagByProps(array $props)
+    /**
+     * Add metatag by properties and their values
+     *
+     * @param array $props
+     * @return void
+     */
+    public static function addTagByProps(array $props)
     {
         $metatags = session('metatags', []);
+        $temp = [];
         foreach ($props as $name => $content) {
-            $metatags[][$name] = $content;
+            $temp[$name] = $content;
         }
+        $temp['by_props'] = true;
+        $metatags[] = $temp;
         session()->put('metatags', $metatags);
     }
 
