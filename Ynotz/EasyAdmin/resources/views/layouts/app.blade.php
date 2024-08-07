@@ -27,7 +27,7 @@ currentroute=$event.detail.currentroute;"
         class="font-sans antialiased text-sm transition-colors">
         <div class="min-h-screen bg-base-200 flex flex-col">
             @include('easyadmin::layouts.navigation')
-            <main class="flex flex-col items-stretch flex-grow w-full">
+            <main class="flex flex-col items-stretch flex-grow w-full">dadaadadfdsffs
                 @fragment('page-content')
                     {{ $slot }}
                 @endfragment

@@ -82,6 +82,15 @@ class MetatagHelper
         session()->put('metatags', $metatags);
     }
 
+    public function addTagByProps(array $props)
+    {
+        $metatags = session('metatags', []);
+        foreach ($props as $name => $content) {
+            $metatags[][$name] = $content;
+        }
+        session()->put('metatags', $metatags);
+    }
+
     /**
      * add og meta tag
      *
