@@ -10,7 +10,7 @@
                 $dispatch('linkaction', {link: this.redirectUrl, route: this.redirectRoute, fresh: true});
             }
         }
-    }" class="fixed top-0 left-0 z-50 w-screen h-screen bg-base-300 bg-opacity-40 flex flex-col justify-evenly"
+    }" x-cloak class="fixed top-0 left-0 z-50 w-screen h-screen bg-base-300 bg-opacity-40 flex flex-col justify-evenly"
     x-show="showmodal"
     @shownotice.window="message = $event.detail.message; mode = $event.detail.mode; redirectUrl = $event.detail.redirectUrl; redirectRoute = $event.detail.redirectRoute; showmodal = true;"
     >
