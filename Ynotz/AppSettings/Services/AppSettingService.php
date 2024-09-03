@@ -100,7 +100,8 @@ class AppSettingService implements ModelViewConnector
             'name' => FormHelper::makeInput(
                 inputType: 'text',
                 key: 'name',
-                label: 'Name'
+                label: 'Name',
+                properties: ['readonly' => true]
             ),
             'value_type' => FormHelper::makeSelect(
                 key: 'value_type',
@@ -290,7 +291,7 @@ class AppSettingService implements ModelViewConnector
                 id: 'form_'.Str::lower(Str::plural($sn)).'_create',
                 action_route: Str::lower(Str::plural($sn)) . '.store',
                 success_redirect_route: Str::lower(Str::plural($sn)). '.show',
-                success_redirect_key: 'id',
+                // success_redirect_key: 'id',
                 cancel_route: 'dashboard',
                 items: $this->getCreateFormElements(),
                 layout: $this->buildCreateFormLayout(),
@@ -313,7 +314,7 @@ class AppSettingService implements ModelViewConnector
                 id: 'form_'.Str::lower(Str::plural($sn)).'_edit',
                 action_route: Str::lower(Str::plural($sn)) . '.update',
                 action_route_params: [$keyCol => $instance->$keyCol],
-                success_redirect_route: Str::lower(Str::plural($sn)). '.show',
+                success_redirect_route: Str::lower(Str::plural($sn)). '.index',
                 cancel_route: 'dashboard',
                 items: $this->getEditFormElements($instance),
                 layout: $this->buildEditFormLayout(),
@@ -393,12 +394,12 @@ class AppSettingService implements ModelViewConnector
         $layout = (new ColumnLayout())
             ->addElements(
                 [
-                    (new RowLayout(width: '1/4'))->addElements(
+                    (new RowLayout(width: 'full'))->addElements(
                         [
                             (new ColumnLayout())->addInputSlot('name'),
                         ]
                     ),
-                    (new RowLayout(width: '1/4'))->addElements(
+                    (new RowLayout(width: 'full'))->addElements(
                         [
                             (new ColumnLayout())->addInputSlot('value_type'),
                         ]
@@ -408,7 +409,7 @@ class AppSettingService implements ModelViewConnector
                             (new ColumnLayout(style: 'justify-content: flex-end'))->addInputSlot('auto_manage'),
                         ]
                     ),
-                    (new RowLayout(width: '1/4'))->addElements(
+                    (new RowLayout(width: 'full'))->addElements(
                         [
                             (new ColumnLayout())->addInputSlot('value_edit'),
                         ]
@@ -455,9 +456,9 @@ class AppSettingService implements ModelViewConnector
         return [
             'name' => ['required', 'string'],
             'slug' => ['required', 'string'],
-            'value_type' => ['required', 'string'],
+            'value_type' => ['sometimes', 'string'],
             'value' => ['sometimes',],
-            'auto_manage' => ['required', 'boolean'],
+            'auto_manage' => ['sometimes', 'boolean'],
             'view_permissions' => ['sometimes', 'nullable', 'array'],
             'edit_permissions' => ['sometimes', 'nullable', 'array'],
             'delete_permissions' => ['sometimes', 'nullable', 'array'],
@@ -477,7 +478,9 @@ class AppSettingService implements ModelViewConnector
     public function prepareForUpdateValidation($data)
     {
         $data['slug'] = Str::slug($data['name']);
-        $data['auto_manage'] = boolval($data['auto_manage']);
+        if (isset($data['auto_manage'])) {
+            $data['auto_manage'] = boolval($data['auto_manage']);
+        }
         return $data;
     }
 
