@@ -74,7 +74,7 @@ x-init="
         @stack('css')
         @stack('header_js')
     </head>
-    <body x-data="initPage" x-init="initAction();"
+    <body x-data="initPage" x-init="await initAction();"
         @linkaction.window="initialised = false; fetchLink($event.detail); "
         @formsubmit.window="postForm($event.detail);"
         @popstate.window="historyAction($event)"
